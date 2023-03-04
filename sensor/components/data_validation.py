@@ -3,9 +3,10 @@ from sensor.entity.artifact_entity import DataIngestionArtifact, DataValidationA
 from sensor.logger import logging
 from sensor.exception import SensorException
 from sensor.constant.training_pipeline import SCHEMA_FILE_PATH
-from sensor.utils.main_utils import read_yaml_file
+from sensor.utils.main_utils import read_yaml_file, write_yaml_file
 import pandas as pd
 import sys, os
+from scipy.stats import ks_2samp
 
 class DataValidation:
     def __init__(self, data_ingestion_artifact:DataIngestionArtifact, data_validation_config:DataValidationConfig):
@@ -48,9 +49,29 @@ class DataValidation:
         except Exception as e:
             raise SensorException(e,sys)
         
-    def detect_dataset_drift(self):
+    def detect_dataset_drift(self, base_df:pd.DataFrame, current_df=pd.DataFrame, threshold=0.05)->bool:
         try:
-            pass
+            status=True
+            report={}
+            for column in base_df.columns:
+                d1=base_df[column]
+                d2=current_df[column]
+                is_same_dist=ks_2samp(d1,d2)
+                if is_same_dist>=threshold :
+                    is_found=False
+                    status=False
+                else :
+                    is_found=True
+                report.update({column:{"pvalue":float(is_same_dist.pvalue),"drift_status":is_found}})
+
+                drift_rep_file_path=self.data_validation_config.drift_report_file_path
+
+                os.makedirs(os.path.dirname(drift_rep_file_path))
+                write_yaml_file(file_path=drift_rep_file_path,content=report,replace=True)
+
+                return status
+
+
         except Exception as e:
             raise SensorException(e,sys)
 
@@ -83,5 +104,15 @@ class DataValidation:
 
             if len(error_message>0):
                 raise Exception(e)
+            
+            # finding drift report
+            status=self.detect_dataset_drift(train_dataframe, test_dataframe)
+            data_validation_artifact=DataValidationArtifact(validation_status=status,
+                                                            valid_test_file_path=self.data_ingestion_artifact.test_file_path,
+                                                            valid_train_file_path=self.data_ingestion_artifact.trained_file_path,
+                                                            invalid_test_file_path=self.data_validation_config.invalid_test_file_path,
+                                                            invalid_train_file_path=self.data_validation_config.invalid_train_file_path,
+                                                            drift_report_file_path=self.data_validation_config.drift_report_file_path)
+            return data_validation_artifact
         except Exception as e:
             raise SensorException(e,sys)
