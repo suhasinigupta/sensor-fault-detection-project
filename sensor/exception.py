@@ -16,8 +16,10 @@ class SensorException(Exception):
 
         return error_message
 
-        def __str__(self):
-            return self.error_message
+    def __str__(self):
+            
+        return self.error_message
 
-        def __repr__(self):
-            return SensorException.__name__.str()
+    def __repr__(self):
+            
+        return SensorException.__name__.str()
