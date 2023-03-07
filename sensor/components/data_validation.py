@@ -21,8 +21,8 @@ class DataValidation:
         try:
             length_of_cols=len(self._schema_config["columns"])
             if len(dataframe)==length_of_cols :
-                return False
-            return True
+                return True
+            return False
 
         except Exception as e:
             raise SensorException(e,sys)
@@ -57,7 +57,7 @@ class DataValidation:
                 d1=base_df[column]
                 d2=current_df[column]
                 is_same_dist=ks_2samp(d1,d2)
-                if is_same_dist>=threshold :
+                if is_same_dist.pvalue>=threshold :
                     is_found=False
                     status=False
                 else :
@@ -66,12 +66,10 @@ class DataValidation:
 
                 drift_rep_file_path=self.data_validation_config.drift_report_file_path
 
-                os.makedirs(os.path.dirname(drift_rep_file_path))
+                os.makedirs(os.path.dirname(drift_rep_file_path), exists_ok=True)
                 write_yaml_file(file_path=drift_rep_file_path,content=report,replace=True)
 
                 return status
-
-
         except Exception as e:
             raise SensorException(e,sys)
 

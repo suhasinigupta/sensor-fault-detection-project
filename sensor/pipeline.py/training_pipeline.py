@@ -1,17 +1,21 @@
-from sensor.entity.config_entity import TrainingPipelineConfig, DataIngestionConfig, DataValidationConfig, DataTransformationConfig
+from sensor.entity.config_entity import TrainingPipelineConfig, DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
 from sensor.exception import SensorException
 from sensor.logger import logging
-from sensor.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
+from sensor.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact,ModelTrainerArtifact, ClassificationMetricArtifact
 from sensor.components.data_ingestion import DataIngestion
 from sensor.components.data_validation import DataValidation
 from sensor.components.data_transformation import DataTransformation
+from sensor.components.model_trainer import ModelTrainer
 import sys
 
 class TrainingPipeline:
 
     def __init__(self):
-        self.training_pipeline_config=TrainingPipelineConfig()
+        try:
+            self.training_pipeline_config=TrainingPipelineConfig()
         #self.data_ingestion_config=DataIngestionConfig(self.training_pipeline_config)
+        except Exception as e:
+            raise SensorException(e,sys)
 
     def start_data_ingestion(self)->DataIngestionArtifact:
         try :
@@ -19,7 +23,6 @@ class TrainingPipeline:
             self.data_ingestion_config=DataIngestionConfig(self.training_pipeline_config)
             data_ingestion=DataIngestion(self.data_ingestion_config)
             data_ingestion_artifact=data_ingestion.initiate_data_ingestion()
-            logging.info("Data Ingestion Completed and artifact is {data_ingestion_artifact}")
             return data_ingestion_artifact
         except Exception as e:
             raise SensorException(e,sys)
@@ -47,9 +50,14 @@ class TrainingPipeline:
         except Exception as e:
             raise SensorException(e,sys)
         
-    def start_model_trainer(self):
+    def start_model_trainer(self, data_transformation_artifact:DataTransformationArtifact)->ModelTrainerArtifact:
         try :
-            pass
+            logging.info("Starting model trainer")
+            model_trainer_config= ModelTrainerConfig(training_pipeline_config=self.training_pipeline_config)
+            model_trainer= ModelTrainer(model_trainer_config,data_transformation_artifact)
+            model_trainer_artifact=model_trainer.initiate_model_trainer()
+            logging.info("Model Training Completed")
+            return model_trainer_artifact
         except Exception as e:
             raise SensorException(e,sys)
     
@@ -70,5 +78,6 @@ class TrainingPipeline:
             data_ingestion_artifact=self.start_data_ingestion()
             data_validation_artifact=self.start_data_validation(data_ingestion_artifact)
             data_transformation_artifact=self.start_data_transformation(data_validation_artifact)
+            model_trainer_artifact=self.start_model_trainer(model_trainer_artifact)
         except Exception as e:
             raise SensorException(e,sys)

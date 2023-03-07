@@ -45,11 +45,12 @@ class DataIngestion:
         '''
         try:
                    
+
+            logging.info("Performed train test split on the dataframe")
+
             train_set, test_set = train_test_split(
                 dataframe, test_size=self.data_ingestion_config.train_test_split_ratio
             )
-
-            logging.info("Performed train test split on the dataframe")
 
             logging.info(
                 "Exited split_data_as_train_test method of Data_Ingestion class"
@@ -83,6 +84,7 @@ class DataIngestion:
             self.split_data_as_train_test_split(dataframe)
             data_ingestion_artifact=DataIngestionArtifact(trained_file_path=self.data_ingestion_config.training_file_path,
                                                           test_file_path=self.data_ingestion_config.testing_file_path)
+            logging.info(f"Data Ingestion Artifact:[{data_ingestion_artifact}]")
             return data_ingestion_artifact
         except Exception as e :
             raise SensorException(e, sys)
