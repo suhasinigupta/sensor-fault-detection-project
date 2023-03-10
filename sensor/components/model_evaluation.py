@@ -4,7 +4,7 @@ from sensor.logger import logging
 from sensor.exception import SensorException
 from sensor.ML.metric.classification_metric import get_classification_score
 from sensor.utils.main_utils import save_object, load_object, write_yaml_file
-from sensor.ML.model.estimator import ModelResolver
+from sensor.ML.model.estimator import ModelResolver , TargetValueMapping
 import os, sys
 import pandas as pd
 from sensor.constant.training_pipeline import TARGET_COLUMN
@@ -28,7 +28,9 @@ class ModelEvaluation:
           test_df=pd.read_csv(valid_test_file_path)
 
           df=pd.concat([train_df,test_df])
-
+          y_true=df[TARGET_COLUMN]
+          y_true=y_true.replace(TargetValueMapping().to_dict())
+          df=df.drop(columns=TARGET_COLUMN, axis=1)
           train_model_file_path=self.model_trainer_artifact.trained_model_file_path
           model_resolver=ModelResolver()
 
@@ -49,14 +51,13 @@ class ModelEvaluation:
           latest_model=load_object(latest_model_path)
           train_model=load_object(train_model_file_path)
 
-          y_true=df[TARGET_COLUMN]
           y_train_pred=train_model.predict(df.drop(columns=TARGET_COLUMN))
           y_latest_pred=latest_model.predict(df.drop(columns=TARGET_COLUMN))
 
           trained_metric=get_classification_score(y_true, y_train_pred)
           latest_metric=get_classification_score(y_true, y_latest_pred)
 
-          improved_accuracy=trained_metric-latest_metric
+          improved_accuracy=trained_metric.f1_score -latest_metric.f1_score
           if improved_accuracy> self.model_evaluation_config.change_threshold:
              is_model_acceptes=True
 

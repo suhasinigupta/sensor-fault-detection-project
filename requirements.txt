@@ -3,4 +3,5 @@ pyYAML
 scipy
 dill
 imblearn==0.0
+fastapi==0.78.0
 -e.
