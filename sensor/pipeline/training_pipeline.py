@@ -25,10 +25,11 @@ class TrainingPipeline:
 
     def start_data_ingestion(self)->DataIngestionArtifact:
         try :
-            logging.info("Starting Data Ingestion")
+            logging.info(f"{'>>'*10}Starting Data Ingestion{'<<'*10}")
             self.data_ingestion_config=DataIngestionConfig(self.training_pipeline_config)
             data_ingestion=DataIngestion(self.data_ingestion_config)
             data_ingestion_artifact=data_ingestion.initiate_data_ingestion()
+            logging.info(f"{'>>'*10} Data Ingestion Completed {'<<'*10}")
             return data_ingestion_artifact
         except Exception as e:
             raise SensorException(e,sys)

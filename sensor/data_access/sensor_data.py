@@ -24,6 +24,9 @@ class SensorData:
 
 
     def save_csv_file(self,file_path ,collection_name: str, database_name: Optional[str] = None):
+        """ 
+        This method i suse to load csv file into Mongodb database in case data is not present in database(for practise purpose)
+        """
         try:
             data_frame=pd.read_csv(file_path)
             data_frame.reset_index(drop=True, inplace=True)
@@ -50,7 +53,7 @@ class SensorData:
             else:
                 collection = self.mongo_client[database_name][collection_name]
             df = pd.DataFrame(list(collection.find()))
-
+           
             if "_id" in df.columns.to_list():
                 df = df.drop(columns=["_id"], axis=1)
 
