@@ -64,12 +64,12 @@ class DataValidation:
                     is_found=True
                 report.update({column:{"pvalue":float(is_same_dist.pvalue),"drift_status":is_found}})
 
-                drift_rep_file_path=self.data_validation_config.drift_report_file_path
+            drift_rep_file_path=self.data_validation_config.drift_report_file_path
 
-                os.makedirs(os.path.dirname(drift_rep_file_path), exists_ok=True)
-                write_yaml_file(file_path=drift_rep_file_path,content=report,replace=True)
+            os.makedirs(os.path.dirname(drift_rep_file_path), exists_ok=True)
+            write_yaml_file(file_path=drift_rep_file_path,content=report,replace=True)
 
-                return status
+            return status
         except Exception as e:
             raise SensorException(e,sys)
 
@@ -93,7 +93,7 @@ class DataValidation:
                 error_message=f"Test dataframe does not contain all columns"
 
             # validate numerical columns
-            sstatus= self.is_numerical_columns_exists(train_dataframe)
+            status= self.is_numerical_columns_exists(train_dataframe)
             if not status:
                 error_message=f"Train dataframe does not contain all numerical columns"
             status= self.is_numerical_columns_exists(test_dataframe)

@@ -18,7 +18,7 @@ class TrainingPipeline:
     def __init__(self):
         try:
             self.training_pipeline_config=TrainingPipelineConfig()
-            self.s3_sync = S3Sync()
+            #self.s3_sync = S3Sync()
         #self.data_ingestion_config=DataIngestionConfig(self.training_pipeline_config)
         except Exception as e:
             raise SensorException(e,sys)
@@ -26,8 +26,8 @@ class TrainingPipeline:
     def start_data_ingestion(self)->DataIngestionArtifact:
         try :
             logging.info(f"{'>>'*10}Starting Data Ingestion{'<<'*10}")
-            self.data_ingestion_config=DataIngestionConfig(self.training_pipeline_config)
-            data_ingestion=DataIngestion(self.data_ingestion_config)
+            data_ingestion_config=DataIngestionConfig(self.training_pipeline_config)
+            data_ingestion=DataIngestion(data_ingestion_config)
             data_ingestion_artifact=data_ingestion.initiate_data_ingestion()
             logging.info(f"{'>>'*10} Data Ingestion Completed {'<<'*10}")
             return data_ingestion_artifact
@@ -111,18 +111,18 @@ class TrainingPipeline:
         try :
             TrainingPipeline.is_pipeline_running=True
             data_ingestion_artifact=self.start_data_ingestion()
-            data_validation_artifact=self.start_data_validation(data_ingestion_artifact)
-            data_transformation_artifact=self.start_data_transformation(data_validation_artifact)
-            model_trainer_artifact=self.start_model_trainer(model_trainer_artifact)
-            model_evaluation_artifact=self.start_model_evaluation(data_validation_artifact, model_trainer_artifact)
-            if not model_evaluation_artifact.is_model_accepted :
-                raise Exception("Model Is not better than saved model")
-            model_pusher_artifact=self.start_model_pusher(model_evaluation_artifact)
-            TrainingPipeline.is_pipeline_running=False
-            self.sync_artifact_dir_to_s3()
-            self.sync_saved_model_dir_to_s3()
+            #data_validation_artifact=self.start_data_validation(data_ingestion_artifact)
+            #data_transformation_artifact=self.start_data_transformation(data_validation_artifact)
+            #model_trainer_artifact=self.start_model_trainer(model_trainer_artifact)
+            #model_evaluation_artifact=self.start_model_evaluation(data_validation_artifact, model_trainer_artifact)
+            #if not model_evaluation_artifact.is_model_accepted :
+                #raise Exception("Model Is not better than saved model")
+            #model_pusher_artifact=self.start_model_pusher(model_evaluation_artifact)
+            #TrainingPipeline.is_pipeline_running=False
+            #self.sync_artifact_dir_to_s3()
+            #self.sync_saved_model_dir_to_s3()
         except  Exception as e:
-            self.sync_artifact_dir_to_s3()
+            #self.sync_artifact_dir_to_s3()
             TrainingPipeline.is_pipeline_running=False
             raise  SensorException(e,sys)
        

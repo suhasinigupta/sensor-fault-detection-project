@@ -29,7 +29,7 @@ class DataIngestion:
             #creating folder
             feature_store_file_path=self.data_ingestion_config.feature_store_file_path
             feature_dir= os.path.dirname(feature_store_file_path)
-            os.makedirs(feature_dir, exists_ok=True)
+            os.makedirs(feature_dir, exist_ok=True)
 
             #saving df to file
             dataframe.to_csv(feature_store_file_path, index=False, header=True)
@@ -80,7 +80,7 @@ class DataIngestion:
     def initiate_data_ingestion(self)->DataIngestionArtifact:
         try:
             dataframe=self.export_data_into_feature_store()
-            dataframe=dataframe.drop(self._self._schema_config["drop_columns"], axis=1)
+            dataframe=dataframe.drop(self._schema_config["drop_columns"], axis=1)
             self.split_data_as_train_test_split(dataframe)
             data_ingestion_artifact=DataIngestionArtifact(trained_file_path=self.data_ingestion_config.training_file_path,
                                                           test_file_path=self.data_ingestion_config.testing_file_path)

@@ -36,7 +36,7 @@ class SensorData:
             else:
                 collection = self.mongo_client[database_name][collection_name]
             collection.insert_many(records)
-            return len(records)
+            
         except Exception as e:
             raise SensorException(e, sys)
 
