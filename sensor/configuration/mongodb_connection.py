@@ -14,7 +14,7 @@ class MongoDBClient:
         try:
 
             if MongoDBClient.client is None:
-                mongo_db_url ="mongodb+srv://suhasinigupta31:suhasini@cluster0.ubevmpj.mongodb.net/?retryWrites=true&w=majority" 
+                mongo_db_url =" "
                 print(mongo_db_url)
                 if "localhost" in mongo_db_url:
                     MongoDBClient.client = pymongo.MongoClient(mongo_db_url) 
