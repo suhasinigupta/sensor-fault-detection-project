@@ -16,7 +16,7 @@ def write_yaml_file(file_path:str, content:object, replace:bool=False)->None:
         if replace:
            if os.path.exists(file_path):
                os.remove(file_path)
-        os.makedirs(os.path.dirname(file_path), exists_ok=True)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "w") as file:
             yaml.dump(content,file)
    except Exception as e:
@@ -25,7 +25,7 @@ def write_yaml_file(file_path:str, content:object, replace:bool=False)->None:
 def save_numpy_array_data(filepath:str, arr=np.array):
    try:
       dir_path=os.path.dirname(filepath)
-      os.makedirs(dir_path,exists_ok=True)
+      os.makedirs(dir_path,exist_ok=True)
       with open(filepath, "wb") as file_obj:
          np.save(file_obj, arr)
    except Exception as e:

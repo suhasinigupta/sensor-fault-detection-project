@@ -7,7 +7,7 @@ class TargetValueMapping:
         self.neg:int=0
         self.pos:int=1
 
-    def to_dict(self):
+    def to_dict(self)->dict:
         return self.__dict__
     
     def reverse_mapping(self):
@@ -43,7 +43,7 @@ class ModelResolver:
          try :
             timestamps= list(map(int,os.listdir(self.model_dir)))
             latest_timestamp=max(timestamps)
-            latest_model_path=os.path.join(self.model_dir, latest_timestamp, MODEL_FILE_NAME)
+            latest_model_path=os.path.join(self.model_dir, f"latest_timestamp", MODEL_FILE_NAME)
             return latest_model_path
          except Exception as e:
             raise e

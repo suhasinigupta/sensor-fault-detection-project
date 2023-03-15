@@ -16,16 +16,18 @@ class ModelPusher:
                raise SensorException(e,sys)
           
      def initiate_model_pusher(self)->ModelPusherArtifact:
-          try:
+          try: 
+               logging.info("4")
                trained_model_path=self.model_evaluation_artifact.trained_model_path
                model_file_path=self.model_pusher_config.model_file_path
-
-               os.makedirs(self.model_pusher_config.model_pusher_dir, exists_ok=True)
+    
+               logging.info("5")
+               os.makedirs(self.model_pusher_config.model_pusher_dir, exist_ok=True)
                shutil.copy(src=trained_model_path, dst=model_file_path)
 
                saved_model_path=self.model_pusher_config.saved_model_file_path
-               os.makedirs(os.path.dirname(self.model_pusher_config.saved_model_file_path), exists_ok=True)
-               shutil.copy(src=trained_model_path, dest=saved_model_path)
+               os.makedirs(os.path.dirname(self.model_pusher_config.saved_model_file_path), exist_ok=True)
+               shutil.copy(src=trained_model_path, dst=saved_model_path)
 
                model_pusher_artifact=ModelPusherArtifact(saved_model_path=saved_model_path,model_file_path=model_file_path)
                logging.info("Model pusher artifact: [{model_pusher_artifact}]")

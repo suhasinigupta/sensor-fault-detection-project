@@ -12,7 +12,7 @@ class DataValidationArtifact:
     valid_test_file_path:str
     invalid_train_file_path:str
     invalid_test_file_path:str
-    drift_report_file_path:str
+    drift_report_file_path:str 
 
 
 @dataclass

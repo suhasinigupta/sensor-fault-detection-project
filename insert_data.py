@@ -1,6 +1,6 @@
+
 import numpy as np
 
-from sensor.logger import logging
 from sensor.exception import SensorException
 from sensor.configuration.mongodb_connection import MongoDBClient
 from sensor.data_access.sensor_data import SensorData
